@@ -10,7 +10,14 @@ def scientific_calculator(screen_width, screen_height):
 
     class compute_pi:
         def __init__(self, ditgits=1000):
-            self.digit = ditgits
+            if len(piTabdigits.text())>=1:
+                try:
+                    self.digit = int(piTabdigits.text())
+                except:
+                    self.digit = ditgits
+            else:
+                self.digit = ditgits
+
             self.constant = PI
 
         def machin(self,digits = 0):
@@ -35,11 +42,7 @@ def scientific_calculator(screen_width, screen_height):
             # find pi using Machin's Formula pi = 4 * (4 * arccot(5) - arccot(239))
             pi = Decimal(4 * (4 * arccot(5, decimals + 3) - arccot(239, decimals + 3))).quantize(
                 Decimal(10) ** (-decimals))
-            o = open('pi.txt','w')
-            o.write(str(pi))
-            o.close()
-            print('pi saved in pi.txt')
-
+            edit.append(str(pi))
         def chudnovsky(self,digits=0):
             import subprocess
             import pathlib
@@ -54,8 +57,9 @@ def scientific_calculator(screen_width, screen_height):
                     if 'gmp-chudnovsky' in i and i != 'gmp-chudnovsky.c':
                         compiled = True
                         break
+            compiled = True # remove it if not using linux
 
-            if not compiled:
+            if compiled==False:
                 try:
                     p = subprocess.Popen(['gcc', '-s', '-Wall', '-o', 'gmp-chudnovsky', 'gmp-chudnovsky.c', '-lgmp', '-lm'],
                                      stdout=subprocess.PIPE,stdin=subprocess.PIPE)
@@ -69,7 +73,7 @@ def scientific_calculator(screen_width, screen_height):
                 digits = self.digit
             path = pathlib.Path().absolute()
             if sys_name == 'Linux' or sys_name == 'Darwin':
-                p = subprocess.Popen(['./gmp-chudnovsky', str(digits), '1'], stdout=subprocess.PIPE,
+                p = subprocess.Popen(['Add_on/scientific_calculator/gmp-chudnovsky', str(digits), '1'], stdout=subprocess.PIPE,
                                      stdin=subprocess.PIPE, cwd=path)
             elif sys_name == 'Windows':
                 p = subprocess.Popen(['gmp-chudnovsky.exe', str(digits), '1'], stdout=subprocess.PIPE,
@@ -77,6 +81,10 @@ def scientific_calculator(screen_width, screen_height):
 
             out, err = p.communicate()
             print(out.decode())
+            if self.digit>10000:
+                edit.append('result too large\nyou can choose to save into file\n')
+            else:
+                edit.append(out.decode()+'\n')
     def key_handler(key):
         if key =='del':
             pass
@@ -114,12 +122,12 @@ def scientific_calculator(screen_width, screen_height):
     layout = QVBoxLayout()
     layout.setMargin(0)
     edit = QTextEdit()
-    edit.setMaximumHeight(screen_height/4)
+    edit.setMaximumHeight(screen_height/3)
     edit.setAlignment(Qt.AlignRight)
     edit.setFont(QFont("Sans Bold", 15))
     line = QLineEdit()
     line.setFont(QFont("Sans Bold", 15))
-    line.setMinimumHeight(screen_height/12)
+    line.setMinimumHeight(screen_height/16)
     line.returnPressed.connect(execute)
     tab = QTabWidget()
     layout.addWidget(edit)
@@ -130,7 +138,12 @@ def scientific_calculator(screen_width, screen_height):
     main_keyboard_widget = QWidget()
     main_keyboard_layout = QGridLayout()
     main_keyboard_widget.setLayout(main_keyboard_layout)
-    mainKeyboardLayout = [['C','del','ans','undo','^',],['7','8','9'],['4','5','6'],['2','3','4']]
+    mainKeyboardLayout = [
+        ['C','%','del','ans','undo','^','cos','sin','tan']
+        ,['7','8','9','÷','(',')']
+        ,['4','5','6','x']
+        ,['2','3','4','+']
+        ,['0','.','i','-','=']]
     def setupkeyboard():
         row = 0
         column = 0
@@ -145,8 +158,22 @@ def scientific_calculator(screen_width, screen_height):
             row +=1
             column=0
     setupkeyboard()
+
+    ######################## pi calculate ###################
+    piTabWidget = QWidget()
+
+    piTabLayout = QFormLayout()
+    piTabWidget.setLayout(piTabLayout)
+    piTabCb = QComboBox()
+    piTabCb.addItems(['Chudnovsky','Machin'])
+    piTabLayout.addRow(QLabel('Algorithm :'),piTabCb)
+    piTabdigits = QLineEdit()
+    piTabLayout.addRow(QLabel('Decimals :'),piTabdigits)
+    piTabButton = QPushButton('Run algorithm')
+    piTabButton.clicked.connect(lambda :compute_pi().chudnovsky())
+    piTabLayout.addWidget(piTabButton)
+
     tab.addTab(main_keyboard_widget,'calculator')
-
-
+    tab.addTab(piTabWidget, 'calculate PI')
 
     return layout
