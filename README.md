@@ -1,5 +1,7 @@
 # workbench
-A framework for useful tools
+A cross-platform framework for useful tools
+
+pre-alpha state
 
 built in tools include
 - a spreadsheet based on numpy and QAbstractTableModel using numpy ndarray as backend data type, for high efficient data management and data analyzing
