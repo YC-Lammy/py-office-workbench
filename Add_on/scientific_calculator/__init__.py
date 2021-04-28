@@ -139,21 +139,22 @@ def scientific_calculator(screen_width, screen_height):
     main_keyboard_layout = QGridLayout()
     main_keyboard_widget.setLayout(main_keyboard_layout)
     mainKeyboardLayout = [
-        ['C','%','del','ans','undo','^','cos','sin','tan']
-        ,['7','8','9','÷','(',')']
-        ,['4','5','6','x']
+        ['C','%','del','ans','undo','^','sin','cos','tan']
+        ,['7','8','9','÷','(',')','sinh','cosh','tanh']
+        ,['4','5','6','x','^2','sqr','Deg','Rad','Grad']
         ,['2','3','4','+']
         ,['0','.','i','-','=']]
     def setupkeyboard():
+        def add_but(x):
+            but = QPushButton(x)
+            but.setMinimumHeight(40)
+            but.clicked.connect(lambda: key_handler(x))
+            main_keyboard_layout.addWidget(but, row, column)
         row = 0
         column = 0
         for i in mainKeyboardLayout:
             for x in i :
-                but = QPushButton(x)
-                but.setMinimumHeight(40)
-                #but.setFixedSize(100,100)
-                but.clicked.connect(lambda :key_handler(x))
-                main_keyboard_layout.addWidget(but,row,column)
+                add_but(x)
                 column+=1
             row +=1
             column=0
