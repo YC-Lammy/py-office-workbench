@@ -117,6 +117,12 @@ def scientific_calculator(screen_width, screen_height):
         def print(text):
             edit.append(str(text)+'\n')
 
+        def gradFromRad(rad):
+            return 200 * rad / math.pi
+
+        def radFromGrad(grad):
+            return math.pi * grad / 200
+
         text = line.text()
         text = text.replace('x','*')\
             .replace('^','**')\
@@ -129,7 +135,8 @@ def scientific_calculator(screen_width, screen_height):
         floor = math.floor
         e = math.e
         pi = math.pi
-        radians = math.radians
+        Rad = math.radians
+        Deg = math.degrees
         #decimal.getcontext().prec = 1000
         try:
             ans['ans'] = eval(text)
@@ -182,6 +189,33 @@ def scientific_calculator(screen_width, screen_height):
             column=0
     setupkeyboard() # variables stores in local and collected
 
+    ######################## plot tab ##########################
+
+    import pyqtgraph as pg
+    from pyqtgraph import QtGui as graphGui
+    pg.setConfigOptions(antialias=True)
+
+    graphWidget = pg.PlotWidget()
+    graphWidget.setRenderHints(graphGui.QPainter.Antialiasing)
+    graphWidget.showGrid(x=True,y=True)
+    graphWidget.setAntialiasing(True)
+    graphWidget.setYAxisAutoScale(flag=False)
+    graphWidget.setXAxisAutoScale(flag=False)
+    plotLine1 = QLineEdit()
+    plotLine1.setMaximumWidth(screen_width/4)
+    plotLine2 = QLineEdit()
+    plotLine2.setMaximumWidth(screen_width / 4)
+    plotLine3 = QLineEdit()
+    plotLine3.setMaximumWidth(screen_width / 4)
+
+    plotLayout = QGridLayout()
+    plotLayout.addWidget(plotLine1,0,0,1,1)
+    plotLayout.addWidget(plotLine2, 1, 0,1,1)
+    plotLayout.addWidget(plotLine3, 3, 0,1,1)
+    plotLayout.addWidget(graphWidget,0,1,4,4)
+    plotWidget = QWidget()
+    plotWidget.setLayout(plotLayout)
+
     ######################## pi calculate ###################
     piTabWidget = QWidget()
 
@@ -201,9 +235,12 @@ def scientific_calculator(screen_width, screen_height):
     piTabLayout.addWidget(piTabButton)
 
     tab.addTab(main_keyboard_widget,'calculator')
+    tab.addTab(plotWidget, 'plot graph')
     tab.addTab(piTabWidget, 'calculate PI')
+
     runBT= QPushButton('Run')
     runBT.clicked.connect(execute)
     tab.setCornerWidget(runBT)
+
 
     return layout
