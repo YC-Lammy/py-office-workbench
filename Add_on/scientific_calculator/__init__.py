@@ -199,8 +199,6 @@ def scientific_calculator(screen_width, screen_height):
     graphWidget.setRenderHints(graphGui.QPainter.Antialiasing)
     graphWidget.showGrid(x=True,y=True)
     graphWidget.setAntialiasing(True)
-    graphWidget.setYAxisAutoScale(flag=False)
-    graphWidget.setXAxisAutoScale(flag=False)
     plotLine1 = QLineEdit()
     plotLine1.setMaximumWidth(screen_width/4)
     plotLine2 = QLineEdit()
@@ -214,6 +212,7 @@ def scientific_calculator(screen_width, screen_height):
     plotLayout.addWidget(plotLine3, 3, 0,1,1)
     plotLayout.addWidget(graphWidget,0,1,4,4)
     plotWidget = QWidget()
+    plotWidget.setStyleSheet('background-color:white;')
     plotWidget.setLayout(plotLayout)
 
     ######################## pi calculate ###################
