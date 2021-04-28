@@ -96,10 +96,11 @@ def scientific_calculator(screen_width, screen_height):
             resultPI['pi'] = pi
 
         def savePI(self):
-            dir = QFileDialog().getSaveFileName()
+            dir,filter = QFileDialog().getSaveFileName()
             with open(dir, 'w') as o:
                 o.write(resultPI['pi'])
                 o.close()
+
     def key_handler(key):
         funcs = ['sin','cos','tan','sinh','cosh','tanh','Deg','Rad','Grad']
         back = False
@@ -192,6 +193,9 @@ def scientific_calculator(screen_width, screen_height):
     piTabdigits = QLineEdit()
     piTabdigits.setPlaceholderText('Default digits : 1000')
     piTabLayout.addRow(QLabel('Decimals :'),piTabdigits)
+    piTabSavePi = QPushButton('Save result')
+    piTabSavePi.clicked.connect(lambda :compute_pi().savePI())
+    piTabLayout.addWidget(piTabSavePi)
     piTabButton = QPushButton('Run algorithm')
     piTabButton.clicked.connect(lambda :compute_pi().compute(piTabCb.currentText()))
     piTabLayout.addWidget(piTabButton)
