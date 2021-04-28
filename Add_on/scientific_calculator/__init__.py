@@ -5,8 +5,8 @@ def scientific_calculator(screen_width, screen_height):
     from Add_on.scientific_calculator import constants
     import decimal
     import math
-    decimal
-    PI = constants.PI
+
+    resultPI = {'pi':''}
 
     class compute_pi:
         def __init__(self, ditgits=1000):
@@ -18,7 +18,13 @@ def scientific_calculator(screen_width, screen_height):
             else:
                 self.digit = ditgits
 
-            self.constant = PI
+
+        def compute(self,algorithm = 'Chudnovsky'):
+            if algorithm =='Chudnovsky':
+                self.chudnovsky()
+            elif algorithm == 'Machin':
+                self.machin()
+
 
         def machin(self,digits = 0):
             from decimal import Decimal, getcontext
@@ -40,9 +46,11 @@ def scientific_calculator(screen_width, screen_height):
                 return total
             decimals = digits
             # find pi using Machin's Formula pi = 4 * (4 * arccot(5) - arccot(239))
-            pi = Decimal(4 * (4 * arccot(5, decimals + 3) - arccot(239, decimals + 3))).quantize(
-                Decimal(10) ** (-decimals))
-            edit.append(str(pi))
+            pi = str(Decimal(4 * (4 * arccot(5, decimals + 3) - arccot(239, decimals + 3))).quantize(
+                Decimal(10) ** (-decimals)))
+            edit.append(pi)
+            resultPI['pi'] = pi
+
         def chudnovsky(self,digits=0):
             import subprocess
             import pathlib
@@ -80,16 +88,29 @@ def scientific_calculator(screen_width, screen_height):
                                      stdin=subprocess.PIPE, cwd=path)
 
             out, err = p.communicate()
-            print(out.decode())
+            pi = out.decode()
             if self.digit>10000:
                 edit.append('result too large\nyou can choose to save into file\n')
             else:
-                edit.append(out.decode()+'\n')
+                edit.append(pi+'\n')
+            resultPI['pi'] = pi
+
+        def savePI(self):
+            dir = QFileDialog().getSaveFileName()
+            with open(dir, 'w') as o:
+                o.write(resultPI['pi'])
+                o.close()
     def key_handler(key):
-        if key =='del':
-            pass
-        else:
-            line.setText(line.text()+' '+key)
+        funcs = ['sin','cos','tan','sinh','cosh','tanh','Deg','Rad','Grad']
+        back = False
+        if key =='del': key=''
+        elif key == '÷': key = '/'
+        elif any(x in key for x in funcs):
+            key +='()'
+            back = True
+        line.insert(key)
+        if back:
+            line.cursorBackward(False,1)
 
     def execute():
         def print(text):
@@ -145,20 +166,20 @@ def scientific_calculator(screen_width, screen_height):
         ,['2','3','4','+']
         ,['0','.','i','-','=']]
     def setupkeyboard():
-        def add_but(x):
+        def add_but(x): # make sure variable x does not over write by passing it as arg
             but = QPushButton(x)
             but.setMinimumHeight(40)
             but.clicked.connect(lambda: key_handler(x))
-            main_keyboard_layout.addWidget(but, row, column)
+            main_keyboard_layout.addWidget(but, row, column) # follow the grid layout
         row = 0
         column = 0
         for i in mainKeyboardLayout:
             for x in i :
-                add_but(x)
+                add_but(x) # pass in x every loop
                 column+=1
             row +=1
             column=0
-    setupkeyboard()
+    setupkeyboard() # variables stores in local and collected
 
     ######################## pi calculate ###################
     piTabWidget = QWidget()
@@ -169,12 +190,16 @@ def scientific_calculator(screen_width, screen_height):
     piTabCb.addItems(['Chudnovsky','Machin'])
     piTabLayout.addRow(QLabel('Algorithm :'),piTabCb)
     piTabdigits = QLineEdit()
+    piTabdigits.setPlaceholderText('Default digits : 1000')
     piTabLayout.addRow(QLabel('Decimals :'),piTabdigits)
     piTabButton = QPushButton('Run algorithm')
-    piTabButton.clicked.connect(lambda :compute_pi().chudnovsky())
+    piTabButton.clicked.connect(lambda :compute_pi().compute(piTabCb.currentText()))
     piTabLayout.addWidget(piTabButton)
 
     tab.addTab(main_keyboard_widget,'calculator')
     tab.addTab(piTabWidget, 'calculate PI')
+    runBT= QPushButton('Run')
+    runBT.clicked.connect(execute)
+    tab.setCornerWidget(runBT)
 
     return layout
