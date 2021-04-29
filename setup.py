@@ -19,6 +19,7 @@ if sys.platform == 'win32':
     if os.path.exists('c:\\program files\\workbench') == True:
         print('\033[91mpath already exist\033[0m')
         input('press Enter to exit...')
+        sys.exit()
 
     def set_desktop():
         with BytesIO() as f:
@@ -43,9 +44,10 @@ if sys.platform == 'win32':
         ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, "setup.py", None, 10)
 
 elif sys.platform == 'linux':
-    if os.path.exists('c:\\program files\\workbench') == True:
+    if os.path.exists(f'/home/{user}/workbench') == True:
         print('\033[91mpath already exist\033[0m')
         input('press Enter to exit...')
+        sys.exit()
     with BytesIO() as f:
         print('\033[92mgetting zip from github main branch...\033[0m')
         url = 'https://github.com/YC-Lammy/workbench/archive/refs/heads/main.zip' # the computer may not have git
@@ -58,7 +60,22 @@ elif sys.platform == 'linux':
             print('\033[93mextracting zip...\033[0m')
             zip_ref.extractall(f'/home/{user}/workbench')
 
-elif sys.platform == 'darwin':
-    pass # i have no access to mac
+elif sys.platform == 'darwin':# i have no access to mac so don't know if it works
+    if os.path.exists(f'/Users/{user}/workbench') == True:
+        print('\033[91mpath already exist\033[0m')
+        input('press Enter to exit...')
+        sys.exit()
+    with BytesIO() as f:
+        print('\033[92mgetting zip from github main branch...\033[0m')
+        url = 'https://github.com/YC-Lammy/workbench/archive/refs/heads/main.zip' # the computer may not have git
+        r = requests.get(url, allow_redirects=True)
+        print('\033[96mwriting zip to BytesIO...\033[0m')
+        f.write(r.content)
+
+        import zipfile
+
+        with zipfile.ZipFile(f, 'r') as zip_ref:
+            print('\033[93mextracting zip...\033[0m')
+            zip_ref.extractall(f'/Users/{user}/workbench')
 
 print('\033[95mfinish install \033[0m')
