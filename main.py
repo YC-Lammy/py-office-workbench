@@ -7,6 +7,7 @@ from PySide2.QtGui import QIcon
 
 
 def main():
+	print(os.uname())
 	global tabs
 	QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 	app = QApplication(sys.argv)
