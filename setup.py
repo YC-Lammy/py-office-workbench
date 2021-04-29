@@ -48,6 +48,7 @@ elif sys.platform == 'linux':
         print('\033[91mpath already exist\033[0m')
         input('press Enter to exit...')
         sys.exit()
+
     with BytesIO() as f:
         print('\033[92mgetting zip from github main branch...\033[0m')
         url = 'https://github.com/YC-Lammy/workbench/archive/refs/heads/main.zip' # the computer may not have git
