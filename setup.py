@@ -1,36 +1,50 @@
-import os, ctypes, subprocess, sys
-user = os.environ['USERPROFILE']
-file = 'exec.py'
-if os.path.exists('c:\\program files\\GlassTwist\\deepspeech-0.8.2-models.scorer') == False:
-    if os.name == 'nt':
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+import os, ctypes, subprocess, sys, requests
+from io import BytesIO
+from psutil import Process
 
+user = Process().username()
 
-    def set_dir():
-        proc = subprocess.Popen(
-            'cd/ & cd program files & mkdir workstation '
-            , shell=True, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupinfo)
-        out, err = proc.communicate()
-        print(out)
+if sys.platform == 'win32':
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
+    if os.path.exists('c:\\program files\\workbench') == True:
+        print('path already exist')
+        input('press Enter to exit...')
 
     def set_desktop():
-        proc2 = subprocess.Popen(
-            f'move {file} "c:\\program files\\workstation" & cd/ & cd {user} & cd desktop & mklink workstation "{file}" ',
-            shell=True, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupinfo)
-        out, err = proc2.communicate()
-        print(out)
-
+        with BytesIO() as f:
+            url = 'https://github.com/YC-Lammy/workbench/archive/refs/heads/main.zip' # the computer may not have git
+            r = requests.get(url, allow_redirects=True)
+            f.write(r.content)
+            import zipfile
+            with zipfile.ZipFile(f, 'r') as zip_ref:
+                zip_ref.extractall('c:\\program files\\workbench')
 
     def is_admin():
         try:
             return ctypes.windll.shell32.IsUserAnAdmin()
         except:
             return False
-if is_admin():
-    set_dir()
-    set_desktop()
-else:
-    # Rerun the program with admin
-    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, "setup.py", None, 10)
+
+    if is_admin():
+        set_desktop()
+    else:
+        # Rerun the program with admin
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, "setup.py", None, 10)
+
+elif sys.platform == 'linux':
+    if os.path.exists('c:\\program files\\workbench') == True:
+        print('path already exist')
+        input('press Enter to exit...')
+    with BytesIO() as f:
+        url = 'https://github.com/YC-Lammy/workbench/archive/refs/heads/main.zip' # the computer may not have git
+        r = requests.get(url, allow_redirects=True)
+        f.write(r.content)
+        import zipfile
+
+        with zipfile.ZipFile(f, 'r') as zip_ref:
+            zip_ref.extractall(f'/home/{user}/workbench')
+
+elif sys.platform == 'darwin':
+    pass # i have no access to mac

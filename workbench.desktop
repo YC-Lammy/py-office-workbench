@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=workbench
-Keywords=3d;cg;modeling;animation;painting;sculpting;texturing;video editing;video tracking;rendering;render engine;cycles;game engine;python;
+Keywords=workbench;python;
 Exec=workbench %f
 Icon=/pic/icon/main.png
 Terminal=false
