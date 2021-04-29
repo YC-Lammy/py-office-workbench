@@ -102,6 +102,15 @@ def main():
 		link_box.setWindowTitle('Link between tabs')
 		link_box.exec()
 
+	def console():
+		from Add_on import console
+		layout = console.console(screen_width,screen_height)
+		window =QDialog()
+		window.setMinimumSize(screen_width/2,screen_height/2)
+		window.setLayout(layout)
+		window.setWindowTitle('python console')
+		window.exec_()
+
 	def save_preference():
 		o = open('preference.cfg', 'w')
 		a = [[str(mainTabWidget.indexOf(i)), k
@@ -268,6 +277,7 @@ def main():
 
 	link = bar.addMenu('Link')
 	link.addAction('Between Tabs').triggered.connect(link_options)
+	bar.addAction('console').triggered.connect(console)
 	add_tab_bt = QPushButton('+')
 	add_tab_bt.setFont(QFont("Times New Roman", 15))
 	add_tab_bt.setStyleSheet("QPushButton { text-align: top left; }")
