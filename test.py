@@ -136,3 +136,10 @@ class CalcNode(Node):
 #CalcNode(wnd.nodeeditor)
 #wnd.nodeeditor.addNodes()
 #app.exec_()
+import pyttsx3
+engine =pyttsx3.init()
+voices = engine.getProperty('voices')
+print([i.gender for i in voices])
+engine.setProperty('voice', voices[1].id)
+engine.say('fuck you ')
+engine.runAndWait()
