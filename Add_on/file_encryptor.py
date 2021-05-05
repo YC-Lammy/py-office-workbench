@@ -1,6 +1,7 @@
 from Crypto.Cipher import AES
 import time, os, sys
 from PySide2.QtWidgets import *
+from PySide2.QtCore import Qt
 
 def file_encryptor(screen_width,screen_height):
     files = {}
@@ -55,8 +56,37 @@ def file_encryptor(screen_width,screen_height):
     # print(message)
 
     # print(ciphertext)
+
+    class dropArea(QLabel):
+        def __init__(self):
+            super().__init__()
+            self.setText('drop or select file')
+            self.setAcceptDrops(True)
+            self.setFixedSize(screen_width/2,screen_height/3)
+            self.setAlignment(Qt.AlignCenter)
+            self.setStyleSheet('background-color:white ;border: 3px solid;border-color:blue ;border-style:dashed;')
+
+        def dragEnterEvent(self, event):
+            print('drag-enter')
+            if event.mimeData().hasUrls():
+                print('has urls')
+                event.accept()
+            else:
+                event.ignore()
+
+        def dropEvent(self, event):
+            lines = []
+            for url in event.mimeData().urls():
+                lines.append('dropped: %r' % url.toLocalFile())
+            self.setText('\n'.join(lines))
+
+    drop_area = dropArea()
     file_bt = QPushButton('select a file')
     file_bt.setStyleSheet('color:white;background-color:blue;')
+    file_bt.clicked.connect(get_file)
+    dropLayout = QHBoxLayout()
+    dropLayout.addWidget(file_bt,alignment=Qt.AlignBottom)
+    drop_area.setLayout(dropLayout)
     encrypt_bt = QPushButton('encrypt and save')
     encrypt_bt.setMaximumWidth(screen_width/4)
     encrypt_bt.setDisabled(True)
@@ -70,8 +100,7 @@ def file_encryptor(screen_width,screen_height):
     gen_bt = QPushButton('generate random key')
     layout = QGridLayout()
 
-
-    layout.addWidget(file_bt,0,2,1,1)
+    layout.addWidget(drop_area,0,2,1,1)
     layout.addWidget(QLabel('Enter key'),1,1,1,1)
     layout.addWidget(edit_key,1,2,1,1)
     layout.addWidget(gen_bt,1,3,1,1)
