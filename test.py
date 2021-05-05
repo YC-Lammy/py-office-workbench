@@ -136,10 +136,57 @@ class CalcNode(Node):
 #CalcNode(wnd.nodeeditor)
 #wnd.nodeeditor.addNodes()
 #app.exec_()
-import pyttsx3
+def chudnovsky(digits=0):
+            import subprocess
+            import pathlib
+            from platform import system
+            from os import listdir
+
+            sys_name = system()
+
+            compiled = False
+            if sys_name != 'Windows':
+                for i in listdir():
+                    if 'gmp-chudnovsky' in i and i != 'gmp-chudnovsky.c':
+                        compiled = True
+                        break
+            compiled = True  # remove it if not using linux
+
+            if compiled == False:
+                #try:
+                    p = subprocess.Popen(
+                        ['gcc', '-s', '-Wall', '-o', 'gmp-chudnovsky', 'gmp-chudnovsky.c', '-lgmp', '-lm'],
+                        stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+                    out, err = p.communicate()
+                    print(out)
+                    print(err)
+                #except Exception as e:
+                    #QMessageBox(text=e).exec_()
+            path = pathlib.Path().absolute()
+            if sys_name == 'Linux' or sys_name == 'Darwin':
+                p = subprocess.Popen(['Add_on/scientific_calculator/gmp-chudnovsky', str(digits), '1'],
+                                     stdout=subprocess.PIPE,
+                                     stdin=subprocess.PIPE, cwd=path)
+            elif sys_name == 'Windows':
+                p = subprocess.Popen(['gmp-chudnovsky.exe', str(digits), '1'], stdout=subprocess.PIPE,
+                                     stdin=subprocess.PIPE, cwd=path)
+
+            out, err = p.communicate()
+            pi = out.decode()
+            #if self.digit > 10000:
+                #edit.append('result too large\nyou can choose to save into file\n')
+            #else:
+                #edit.append(pi + '\n')
+            #resultPI['pi'] = pi
+            return pi
+
+import pyttsx3, os
+import math
 engine =pyttsx3.init()
 voices = engine.getProperty('voices')
 print([i.gender for i in voices])
-engine.setProperty('voice', voices[1].id)
-engine.say('fuck you ')
+#engine.setProperty('voice', voices[0].id)
+engine.setProperty('volume', 1)
+engine.setProperty('rate',150)
+engine.say(chudnovsky(10000))
 engine.runAndWait()
