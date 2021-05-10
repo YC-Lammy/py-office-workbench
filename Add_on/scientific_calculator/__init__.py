@@ -159,6 +159,7 @@ def scientific_calculator(screen_width, screen_height):
     line.setMinimumHeight(screen_height/16)
     line.returnPressed.connect(execute)
     tab = QTabWidget()
+    tab.setFixedHeight(screen_height/3)
     layout.addWidget(edit)
     layout.addWidget(line)
     layout.addWidget(tab)

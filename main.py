@@ -257,6 +257,7 @@ def main():
 
 	#################### Menu section #########################
 	bar = QMenuBar(window)
+	bar.setStyleSheet('background-color:white; color:black;')
 	bar.setMinimumWidth(window.frameGeometry().width())
 	file = bar.addMenu("&File")
 	file.addAction("Save")#.setShortcut("Ctrl+S")

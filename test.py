@@ -185,8 +185,42 @@ import math
 engine =pyttsx3.init()
 voices = engine.getProperty('voices')
 print([i.gender for i in voices])
-#engine.setProperty('voice', voices[0].id)
+#
+engine.setProperty('voice', voices[0].id)
 engine.setProperty('volume', 1)
 engine.setProperty('rate',150)
 engine.say(chudnovsky(10000))
 engine.runAndWait()
+
+
+import wave
+import random
+import struct
+import datetime
+
+SAMPLE_LEN = 44100 * 300 # 300 seconds of noise, 5 minutes
+
+print("Create file using wave, storing frames in an array and using writeframes only once")
+
+noise_output = wave.open('noise2.wav', 'w')
+noise_output.setparams((2, 2, 44100, 0, 'NONE', 'not compressed'))
+
+d1 = datetime.datetime.now()
+values = []
+
+for i in range(0, SAMPLE_LEN):
+	value = random.randint(-32767, 32767)
+	packed_value = struct.pack('h', value)
+	values.append(packed_value)
+	values.append(packed_value)
+
+value_str = b''.join(values)
+noise_output.writeframes(value_str)
+
+d2 = datetime.datetime.now()
+print((d2 - d1), "(time for writing frames)")
+
+noise_output.close()
+
+d3 = datetime.datetime.now()
+print((d3 - d2), "(time for closing the file)")
