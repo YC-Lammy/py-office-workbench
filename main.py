@@ -287,6 +287,9 @@ def main():
 	bar.setCornerWidget(add_tab_bt)
 	blank_spacer.setFixedHeight(int(bar.height()*0.6))
 	####################### Exec ##########################
+	layout.setMenuBar(bar)
+
+	window.setStyleSheet('background-color:white; color:black;')
 	window.show()
 	window.setWindowState(Qt.WindowMaximized)
 	print('Exec application')

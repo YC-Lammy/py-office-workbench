@@ -6,8 +6,9 @@ from PySide2.QtCore import Qt
 def file_encryptor(screen_width,screen_height):
     files = {}
     def get_file():
-        file, filter = QFileDialog.getOpenFileName()
+        file, filter = QFileDialog.getOpenFileName(None, 'Open file','C://')
         files['new']=file
+        drop_area.setText(file)
         if '.aes256' in file:
             decrypt_bt.setDisabled(False)
             decrypt_save_bt.setDisabled(False)
@@ -30,22 +31,37 @@ def file_encryptor(screen_width,screen_height):
         with open(files['new'], 'r') as f:
             message = f.read()
             f.close()
+        message+=(' '*(16-(len(message) %16)))
+        print(len(message))
         key = key.encode()
-        obj = AES.new(key, AES.MODE_EAX)
-        nonc = obj.nonce
+        obj = AES.new(key, AES.MODE_ECB)
         ciphertext = obj.encrypt(message)
-        with open(files['new']+'.aes256','w') as f:
-            f.write(ciphertext+'nonc:'.encode()+nonc)
+        with open(files['new'].split('/')[-1]+'.aes','wb') as f:
+            f.write(ciphertext)
             f.close()
 
-    def decrypt(file):
-        with open(file,'r')as f:
+    def decrypt():
+        file = drop_area.text()
+        with open(file,'rb')as f:
             encrypted = f.read()
             f.close()
         key = edit_key.text().encode()
-        encrypted , nonc = encrypted.split('nonc:')
-        obj2 = AES.new(key, AES.MODE_EAX, nonc)
+        obj2 = AES.new(key, AES.MODE_ECB)
         a = obj2.decrypt(encrypted)
+        print(a)
+        return a
+
+    def decrypt_and_save():
+        file = drop_area.text()
+        with open(file, 'r')as f:
+            encrypted = f.read()
+            f.close()
+        key = edit_key.text().encode()
+        obj2 = AES.new(key, AES.MODE_ECB)
+        a = obj2.decrypt(encrypted)
+        with open(file.split('/')[-1]+'.txt','w')as o:
+            o.write(a)
+            o.close()
         print(a)
         return a
 
@@ -89,6 +105,7 @@ def file_encryptor(screen_width,screen_height):
     drop_area.setLayout(dropLayout)
     encrypt_bt = QPushButton('encrypt and save')
     encrypt_bt.setMaximumWidth(screen_width/4)
+    encrypt_bt.clicked.connect(encrypt)
     encrypt_bt.setDisabled(True)
     decrypt_bt = QPushButton('decrypt and read')
     decrypt_bt.setMaximumWidth(screen_width/4)

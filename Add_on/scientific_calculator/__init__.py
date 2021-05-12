@@ -173,7 +173,7 @@ def scientific_calculator(screen_width, screen_height):
         ,['7','8','9','÷','(',')','sinh','cosh','tanh']
         ,['4','5','6','x','^2','sqr','Deg','Rad','Grad']
         ,['2','3','4','+']
-        ,['0','.','i','-','=']]
+        ,['0','.','pi','-','=']]
     def setupkeyboard():
         def add_but(x): # make sure variable x does not over write by passing it as arg
             but = QPushButton(x)

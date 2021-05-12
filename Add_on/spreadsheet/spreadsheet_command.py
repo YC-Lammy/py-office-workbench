@@ -13,8 +13,10 @@ def main(commandBar, printOutLabel, tableWidget, tableModel):
     text = commandBar.text()
 
     def print(text):
-        printOutLabel.setText(text)
-
-    text = compile(text,'user','exec')
-    exec(text)
+        printOutLabel.setText(str(text))
+    try:
+        text = compile(text, 'user', 'exec')
+        exec(text)
+    except Exception as e:
+        print(e)
 
